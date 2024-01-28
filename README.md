@@ -1,6 +1,6 @@
 # Licenser
 
-Recursively apply a license and copyright header to an existing code base for GPL compliance
+Recursively apply a license and copyright header to an existing codebase for GPL compliance
 
 Licenser is work in progress software. **Use at your own risk!**
 
