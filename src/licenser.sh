@@ -50,4 +50,4 @@ for arg in $@; do
   esac
 done
 
-git log --author-date-order --reverse --date=short --pretty=format:"%an %as" $1
+git log --author-date-order --reverse --date=short --pretty=format:"%an %as" $1 | grep -e "\d{4}(?:(-\d{2}){2})$"
