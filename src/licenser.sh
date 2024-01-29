@@ -23,7 +23,8 @@ help() {
   echo -e "$bold\nOptions${reset}:"
   echo -e "  -h | --help:$italic Displays this help message$reset"
   echo -e "  -v | --version:$italic Displays the version of the program$reset"
-  echo -e "$italic\nLicenser is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version."
+  echo -e "$italic\nLicenser is work in progress software.$bold Use at your own risk!$reset"
+  echo -e "$italic\n\nLicenser is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version."
   echo -e "\nLicenser is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details."
   echo -e "\nYou should have received a copy of the GNU General Public License along with Licenser. If not, see <https://www.gnu.org/licenses/>.$reset"
   exit
