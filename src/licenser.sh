@@ -64,7 +64,6 @@ isInArray() {
   inputArray=$1
   inputItem=$2
   for i in $inputArray; do
-    if [[
   done
 }
 
