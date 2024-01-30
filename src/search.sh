@@ -16,7 +16,7 @@ declare -A map
 for ((i = 0 ; i < ${#authors[@]} ; i++)); do
   current_author=${authors[$i]}
   current_year=${years[$i]}
-  if [[ $(array_contains $current_year ${map[$currentAuthor]}) == false ]]; then
+  if [[ $(array_contains $current_year ${map[$current_author]}) == false ]]; then
     map[$current_author]="${map[$current_author]} $current_year"
   fi
 done
