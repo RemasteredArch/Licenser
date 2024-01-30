@@ -6,12 +6,18 @@ years=("2023" "2024" "2024" "2024" "2024" "2023")
 #   Test1: 2024
 #   Test2: 2023
 
+array_contains() { # usage: [[ $(array_contains pattern_to_check ${array_name[@]}) == "true" ]]
+  pattern=$1
+  shift
+  [[ "$@" =~ $pattern ]] && echo "true" || echo "false"
+}
+
 declare -A map
 for ((i = 0 ; i < ${#authors[@]} ; i++)); do
-  currentAuthor=${authors[$i]}
-  currentYear=${years[$i]}
-  if [[ -n map[$currentAuthor] ]]; then
-    map[$currentAuthor]="${map[$currentAuthor]} $currentYear"
+  current_author=${authors[$i]}
+  current_year=${years[$i]}
+  if [[ $(array_contains $current_year ${map[$currentAuthor]}) == false ]]; then
+    map[$current_author]="${map[$current_author]} $current_year"
   fi
 done
 
