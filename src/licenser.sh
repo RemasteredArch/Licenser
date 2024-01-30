@@ -70,7 +70,6 @@ log=$(get_log $1)
 
 authors=($(echo "$log" | awk -F "$split_text" '{print $1}'))
 dates=($(echo "$log" | awk -F "$split_text" '{print $2}'))
-both=($(echo "$log" | awk -F "$split_text" '{print $1, $2}'))
 
 declare -A map
 for ((i = 0 ; i < ${#authors[@]} ; i++)); do
@@ -85,7 +84,4 @@ for i in ${!map[@]}; do # for every person in the map...
   echo "LIST: $i: ${map[$i]}" # list their name and contributed years
 done
 
-#for ((i = 0 ; i < ${#authors[@]} ; i++)); do
-#  echo "$i, ${authors[i]}, $(getYear ${dates[i]})"
-#done
-
+#[[ -n "${map[$1]}" ]] && echo "$1 is in array"
