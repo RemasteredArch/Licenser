@@ -6,8 +6,8 @@ years=("2023" "2024" "2024" "2024" "2024" "2023")
 #   Test1: 2024
 #   Test2: 2023
 
-array_contains() { # usage: [[ $(array_contains pattern_to_check ${array_name[@]}) == "true" ]]
-  pattern=$1
+array_contains() { # finds strings in simple arrays (cannot handle entries with spaces, etc)
+  pattern=$1       # usage: [[ $(array_contains pattern_to_check ${array_name[@]}) == "true" ]]
   shift
   [[ "$@" =~ $pattern ]] && echo "true" || echo "false"
 }
@@ -21,8 +21,8 @@ for ((i = 0 ; i < ${#authors[@]} ; i++)); do
   fi
 done
 
-for i in ${!map[@]}; do
-  echo "LIST: $i: ${map[$i]}"
+for i in ${!map[@]}; do # for every person in the map...
+  echo "LIST: $i: ${map[$i]}" # list their name and contributed years
 done
 
 #[[ -n "${map[$1]}" ]] && echo "$1 is in array"
