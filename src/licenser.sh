@@ -37,6 +37,17 @@ version() {
 
 }
 
+getYear() {
+#  for author in $@; do
+  echo "$1" | grep --only-matching -E "LICENSER_DATE=[0-9]{4}-[0-9]{2}-[0-9]{2}" | grep --only-matching -E "[0-9]{4}"
+#  done
+
+}
+
+getName() {
+  echo "$1" | grep --only-matching -P "(?<=LICENSER_AUTHOR=)"
+}
+
 for arg in $@; do
   case $arg in
     -h | --help )
@@ -50,4 +61,24 @@ for arg in $@; do
   esac
 done
 
-git log --author-date-order --reverse --date=short --pretty=format:"%an %as" $1 | grep -e "\d{4}(?:(-\d{2}){2})$"
+log=$(git log --author-date-order --reverse --date=short --pretty=format:"%an LICENSER_SPLIT %as" $1)
+
+echo -e "${bold}input:$italic"
+echo "$log"
+#echo -e "${bold}authors:$italic"
+#authors=$(echo "$log" | awk -F ' LICENSER_SPLIT ' '{print $1}')
+#years=$(echo "$log" | awk -F ' LICENSER_SPLIT ' '{print $2}')
+both=$(echo "$log" | awk -F ' LICENSER_SPLIT ' '{print $1, $2}')
+#for i in $authors; do
+#  echo "$i ${years[$i]}"
+#done
+
+#for i in $authors; do
+#  year=$(getYear $i)
+#  if [[ -n $year ]]; then
+#    echo "year: $year"
+#  else
+#    name=$(getName $i)
+#    echo "name: $name"
+#  fi
+#done
