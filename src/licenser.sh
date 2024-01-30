@@ -66,10 +66,13 @@ simple_array_contains() { # tests if an array contains a given value, but cannot
   [[ "$@" =~ $pattern ]] && echo "true" || echo "false"
 }
 
-log=$(get_log $1)
+# get git data
 
+log=$(get_log $1)
 authors=($(echo "$log" | awk -F "$split_text" '{print $1}'))
 dates=($(echo "$log" | awk -F "$split_text" '{print $2}'))
+
+# declare author array from git data
 
 declare -A map
 for ((i = 0 ; i < ${#authors[@]} ; i++)); do
@@ -80,8 +83,12 @@ for ((i = 0 ; i < ${#authors[@]} ; i++)); do
   fi
 done
 
+# list authors as they appeaer from git
+
 for i in ${!map[@]}; do # for every person in the map...
   echo "LIST: $i: ${map[$i]}" # list their name and contributed years
 done
+
+# compress authors with multiple commit names to one entry
 
 #[[ -n "${map[$1]}" ]] && echo "$1 is in array"
