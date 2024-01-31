@@ -73,22 +73,22 @@ authors=($(echo "$log" | awk -F "$split_text" '{print $1}'))
 dates=($(echo "$log" | awk -F "$split_text" '{print $2}'))
 
 # declare author array from git data
+#   maybe add some logic to add the first entry to a list without a preceding space? e.g. -n ${map[$current_author]}
 
 declare -A map
 for ((i = 0 ; i < ${#authors[@]} ; i++)); do
   current_author=${authors[$i]}
   current_year=$(get_year ${dates[$i]})
+  # compress authors with multiple commit names using `current_author=` here
   if [[ $(simple_array_contains $current_year ${map[$current_author]}) == false ]]; then
     map[$current_author]="${map[$current_author]} $current_year"
   fi
 done
 
-# list authors as they appeaer from git
+# list authors as they appear from git
 
 for i in ${!map[@]}; do # for every person in the map...
   echo "LIST: $i: ${map[$i]}" # list their name and contributed years
 done
-
-# compress authors with multiple commit names to one entry
 
 #[[ -n "${map[$1]}" ]] && echo "$1 is in array"
