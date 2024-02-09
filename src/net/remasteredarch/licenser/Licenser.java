@@ -13,6 +13,10 @@
 
 package net.remasteredarch.licenser;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+
 public class Licenser {
 	private final static String version = "v0.1";
 
@@ -20,14 +24,31 @@ public class Licenser {
 	private final static String bold = "\033[1m";
 	private final static String italic = "\033[3m";
 
+	private static File path;
+	private static boolean isDryRun;
+
 	public static void main(String[] args) {
 		parseOptions(args);
+		System.out.println(path + " " + isDryRun);
 	}
 
 	private static void parseOptions(String[] args) {
-		for (String arg : args) {
+		if (args.length == 0)
+			helpMessage();
+
+		for (int i = 0; i < args.length; i++) {
+			String arg = args[i];
 			if (arg.equals("--help") || arg.equals("-h")) {
 				helpMessage();
+			}
+			if (arg.equals("--version") || arg.equals("-v")) {
+				System.out.println(version);
+				System.exit(0);
+			}
+			if (i == 0) {
+				path = new File(arg);
+			} else if (arg.equals("--dry-run") || arg.equals("-d")) {
+				isDryRun = true;
 			}
 		}
 	}
@@ -39,7 +60,6 @@ public class Licenser {
 		System.out.println(bold + "\nPath:" + reset);
 		System.out.println("  Provide a directory to recursively apply to all files within the given directory");
 		System.out.println("  Provide a file to only apply to the given file");
-		System.out.println("  Provide no path to use the current working directory");
 		System.out.println(bold + "\nOptions:" + reset);
 		System.out.println("  -h | --help     " + italic + "Displays this help message" + reset);
 		System.out.println("  -v | --version  " + italic + "Displays the version of the program" + reset);
@@ -53,5 +73,6 @@ public class Licenser {
 		System.out.println(
 				"\nYou should have received a copy of the GNU General Public License along with Licenser. If not, see <https://www.gnu.org/licenses/>."
 						+ reset);
+		System.exit(0);
 	}
 }
