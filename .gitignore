@@ -1,2 +1,7 @@
 # ignore test directory
-dev/
+/dev/
+
+# eclipse files
+/bin/
+.classpath
+.project
