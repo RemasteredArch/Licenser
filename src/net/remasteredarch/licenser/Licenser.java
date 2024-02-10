@@ -73,9 +73,7 @@ public class Licenser {
 		System.out.println(
 				"\nYou should have received a copy of the GNU General Public License along with Licenser. If not, see <https://www.gnu.org/licenses/>."
 						+ reset);
-		System.out.println("\n\nThis Licenser has spider powers 🕷️ 🕸️");
+		System.out.println("\n\nThis Licenser has spider powers 🕷️ 🕸️"); // spiders 🕷️ 🕸️
 		System.exit(0);
 	}
 }
-
-// spiders 🕷️ 🕸️
