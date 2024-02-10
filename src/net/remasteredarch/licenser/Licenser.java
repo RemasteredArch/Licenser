@@ -13,12 +13,20 @@
 
 package net.remasteredarch.licenser;
 
+import java.util.Scanner;
+import java.io.PrintStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 
 public class Licenser {
-	private final static String version = "v0.1";
+	private final static String version = "v0.1\n";
 
 	private final static String reset = "\033[0m";
 	private final static String bold = "\033[1m";
@@ -29,7 +37,41 @@ public class Licenser {
 
 	public static void main(String[] args) {
 		parseOptions(args);
-		System.out.println(path + " " + isDryRun);
+		if (path.isDirectory()) {
+			printDirectoryRecursive(path, false, 0);
+		} else {
+			printFileContents(path);
+		}
+	}
+
+	private static void printFileContents(File file) {
+		try {
+			System.out
+					.println(Files.readString(Path.of("/home/arch/dev/Licenser/license_notice_template.txt"))
+							+ Files.readString(path.toPath()));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private static void printDirectoryRecursive(File directory, boolean showHidden, int depth) {
+		String indent = "";
+		for (int i = 0; i < depth - 1; i++) {
+			indent += "  ";
+		}
+
+		System.out.println(indent + directory + ":");
+		indent += "  ";
+
+		for (File file : directory.listFiles()) {
+			if (!file.isHidden()) {
+				if (file.isDirectory()) {
+					printDirectoryRecursive(file, showHidden, depth + 1);
+				} else {
+					System.out.println(indent + file);
+				}
+			}
+		}
 	}
 
 	private static void parseOptions(String[] args) {
