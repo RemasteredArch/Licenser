@@ -21,12 +21,18 @@ import java.util.List;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOError;
 import java.io.IOException;
+import java.lang.Process;
+import java.lang.Runtime;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 
 public class Licenser {
-	private final static String version = "v0.1\n";
+	private final static String version = "v0.1";
 
 	private final static String reset = "\033[0m";
 	private final static String bold = "\033[1m";
@@ -35,10 +41,38 @@ public class Licenser {
 	private static File inputPath;
 	private static boolean isDryRun;
 	private static File copyrightNoticeTemplate = new File("/home/arch/dev/Licenser/license_notice_template.txt");
+	private static boolean skipGitCheck;
 
 	public static void main(String[] args) {
 		parseOptions(args);
-		print(inputPath, copyrightNoticeTemplate);
+		if (!skipGitCheck)
+			checkForGit(inputPath);
+		// print(inputPath, copyrightNoticeTemplate);
+		// print(inputPath);
+	}
+
+	private static void checkForGit(File file) {
+		String path = file.toString();
+		String[] command = { "git", "ls-files", "--error-unmatch", path };
+		try {
+			Process git = new ProcessBuilder(command).start();
+			int exitValue = git.exitValue();
+			if (exitValue == 0) // if project is tracked by git
+				return;
+		} catch (IOException e) {
+		}
+		String object = file.isDirectory() ? "directory" : "folder"; // if project is not tracked by git or git is not
+																																	// installed
+		System.out.println("This " + object
+				+ " is not tracked by git. Licenser is not guaranteed to work perfectly, and may make irreversible changes. Are you sure you want to continue? (--ignore-git to ignore this check)");
+		String response;
+		do {
+			System.out.print(bold + "(y/n): " + reset);
+			Scanner input = new Scanner(System.in);
+			response = input.next();
+		} while (response != "y" && response != "n");
+		if (response == "n")
+			System.exit(0); // this is probably *not* the right way
 	}
 
 	private static void print(File path) {
@@ -104,7 +138,10 @@ public class Licenser {
 			}
 			if (arg.equals("--version") || arg.equals("-v")) {
 				System.out.println(version);
-				System.exit(0);
+				System.exit(0); // this might be the *wrong* way to do it
+			}
+			if (arg.equals("--ignore-git")) {
+				skipGitCheck = true;
 			}
 			if (i == 0) {
 				inputPath = new File(arg);
@@ -126,7 +163,8 @@ public class Licenser {
 		System.out.println("  -v | --version  " + italic + "Displays the version of the program" + reset);
 		System.out.println(
 				"  -d | --dry-run  " + italic + "Displays the effects of a given input without actually running." + reset);
-		System.out.println(italic + "\n\nLicenser is work in progress software. " + bold + "Use at your own risk!" + reset);
+		System.out.println("  --ignore-git    " + italic + "Ignores safety check that git is in use.");
+		System.out.println("\n\nLicenser is work in progress software. " + bold + "Use at your own risk!" + reset);
 		System.out.println(italic
 				+ "\n\nLicenser is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.");
 		System.out.println(
