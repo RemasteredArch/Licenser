@@ -32,6 +32,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.Stack;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Licenser {
 	private final static String version = "v0.1";
@@ -80,15 +81,17 @@ public class Licenser {
 		}
 	}
 
+	private static ArrayList<Commit> getGitLog(File file) {
+
+	}
+
 	private static boolean checkExtension(File file) {
 		for (String extension : codeFileExtensions) {
 			int fileLength = file.toString().length();
 			int extensionLength = extension.length();
 			String inputExtension = file.toString().substring(fileLength - extensionLength, fileLength);
-			if (inputExtension.equals(extension)) {
-				System.out.println(file + " " + inputExtension + " " + extension + " " + inputExtension.equals(extension));
+			if (inputExtension.equals(extension))
 				return true;
-			}
 		}
 		return false;
 	}
@@ -228,12 +231,12 @@ public class Licenser {
 }
 
 class Item {
-	File file;
-	Path path;
-	ArrayList<Author> authors;
+	public File tempFile;
+	public File originalFile;
+	public ArrayList<HashMap<String, String>> authors;
 }
 
-class Author {
-	String name;
-	ArrayList<String> years;
+class Commit {
+	public String author;
+	public String year;
 }
