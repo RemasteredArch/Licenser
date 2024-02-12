@@ -31,6 +31,7 @@ import java.lang.Runtime;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.Stack;
+import java.util.ArrayList;
 
 public class Licenser {
 	private final static String version = "v0.1";
@@ -45,6 +46,7 @@ public class Licenser {
 	private static File copyrightNoticeTemplate = new File("/home/arch/dev/Licenser/templates/java.txt");
 	private static boolean skipGitCheck;
 	private static Stack<File> files = new Stack<>();
+	private static ArrayList<Item> items = new ArrayList<>();
 	private static String[] codeFileExtensions = { ".java" };
 
 	public static void main(String[] args) {
@@ -52,6 +54,7 @@ public class Licenser {
 		if (!skipGitCheck)
 			checkForGit(inputPath);
 		getFileList(inputPath);
+		System.out.println("List:");
 		for (File file : files) {
 			System.out.println(file);
 		}
@@ -61,18 +64,33 @@ public class Licenser {
 
 	private static void getFileList(File file) {
 		if (file.isFile()) {
-			files.push(file);
+			if (checkExtension(file))
+				files.push(file);
 			return;
 		}
+
 		for (File item : file.listFiles()) {
 			if (!item.isHidden() || actOnHidden) {
 				if (file.isDirectory()) {
 					getFileList(item);
-				} else {
+				} else if (checkExtension(file)) {
 					files.push(item);
 				}
 			}
 		}
+	}
+
+	private static boolean checkExtension(File file) {
+		for (String extension : codeFileExtensions) {
+			int fileLength = file.toString().length();
+			int extensionLength = extension.length();
+			String inputExtension = file.toString().substring(fileLength - extensionLength, fileLength);
+			if (inputExtension.equals(extension)) {
+				System.out.println(file + " " + inputExtension + " " + extension + " " + inputExtension.equals(extension));
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private static void checkForGit(File file) {
@@ -207,4 +225,15 @@ public class Licenser {
 		System.out.println("\n\nThis Licenser has spider powers 🕷️ 🕸️"); // spiders 🕷️ 🕸️
 		System.exit(0);
 	}
+}
+
+class Item {
+	File file;
+	Path path;
+	ArrayList<Author> authors;
+}
+
+class Author {
+	String name;
+	ArrayList<String> years;
 }
