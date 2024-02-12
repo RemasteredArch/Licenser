@@ -32,11 +32,16 @@ public class Licenser {
 	private final static String bold = "\033[1m";
 	private final static String italic = "\033[3m";
 
-	private static File path;
+	private static File inputPath;
 	private static boolean isDryRun;
+	private static File copyrightNoticeTemplate = new File("/home/arch/dev/Licenser/license_notice_template.txt");
 
 	public static void main(String[] args) {
 		parseOptions(args);
+		print(inputPath, copyrightNoticeTemplate);
+	}
+
+	private static void print(File path) {
 		if (path.isDirectory()) {
 			printDirectoryRecursive(path, false, 0);
 		} else {
@@ -44,11 +49,25 @@ public class Licenser {
 		}
 	}
 
+	private static void print(File path, File copyrightNoticeTemplate) {
+		if (path.isDirectory()) {
+			printDirectoryRecursive(path, false, 0);
+		} else {
+			printFileContents(path, copyrightNoticeTemplate);
+		}
+	}
+
 	private static void printFileContents(File file) {
 		try {
-			System.out
-					.println(Files.readString(Path.of("/home/arch/dev/Licenser/license_notice_template.txt"))
-							+ Files.readString(path.toPath()));
+			System.out.println(Files.readString(file.toPath()));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private static void printFileContents(File file, File copyrightNoticeTemplate) {
+		try {
+			System.out.println(Files.readString(copyrightNoticeTemplate.toPath()) + Files.readString(file.toPath()));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -88,7 +107,7 @@ public class Licenser {
 				System.exit(0);
 			}
 			if (i == 0) {
-				path = new File(arg);
+				inputPath = new File(arg);
 			} else if (arg.equals("--dry-run") || arg.equals("-d")) {
 				isDryRun = true;
 			}
