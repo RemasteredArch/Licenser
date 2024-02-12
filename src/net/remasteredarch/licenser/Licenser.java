@@ -41,17 +41,38 @@ public class Licenser {
 
 	private static File inputPath;
 	private static boolean isDryRun;
-	private static File copyrightNoticeTemplate = new File("/home/arch/dev/Licenser/license_notice_template.txt");
+	private static boolean actOnHidden;
+	private static File copyrightNoticeTemplate = new File("/home/arch/dev/Licenser/templates/java.txt");
 	private static boolean skipGitCheck;
-	private static Stack<File> files;
+	private static Stack<File> files = new Stack<>();
+	private static String[] codeFileExtensions = { ".java" };
 
 	public static void main(String[] args) {
 		parseOptions(args);
 		if (!skipGitCheck)
 			checkForGit(inputPath);
-		System.out.println("Continuing...");
+		getFileList(inputPath);
+		for (File file : files) {
+			System.out.println(file);
+		}
 		// print(inputPath, copyrightNoticeTemplate);
 		// print(inputPath);
+	}
+
+	private static void getFileList(File file) {
+		if (file.isFile()) {
+			files.push(file);
+			return;
+		}
+		for (File item : file.listFiles()) {
+			if (!item.isHidden() || actOnHidden) {
+				if (file.isDirectory()) {
+					getFileList(item);
+				} else {
+					files.push(item);
+				}
+			}
+		}
 	}
 
 	private static void checkForGit(File file) {
@@ -59,13 +80,18 @@ public class Licenser {
 		String[] command = { "git", "ls-files", "--error-unmatch", path };
 		try {
 			Process git = new ProcessBuilder(command).start();
+			try {
+				Thread.sleep(500); // there has got to be a better way than this
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 			int exitValue = git.exitValue();
 			if (exitValue == 0) // if project is tracked by git
 				return;
 		} catch (IOException e) {
 		}
-		String object = file.isDirectory() ? "directory" : "folder"; // if project is not tracked by git or git is not
-																																	// installed
+		String object = file.isDirectory() ? "directory" : "file"; // if project is not tracked by git or git is not
+																																// installed
 		System.out.println("This " + object
 				+ " is not tracked by git. Licenser is not guaranteed to work perfectly, and may make irreversible changes. Are you sure you want to continue? (--ignore-git to ignore this check)");
 		String response;
@@ -74,7 +100,7 @@ public class Licenser {
 			Scanner input = new Scanner(System.in);
 			response = input.next();
 		} while (!response.equals("y") && !response.equals("n"));
-		if (response == "n")
+		if (response.equals("n"))
 			System.exit(0); // this is probably *not* the right way
 	}
 
@@ -145,6 +171,9 @@ public class Licenser {
 			}
 			if (arg.equals("--ignore-git")) {
 				skipGitCheck = true;
+			}
+			if (arg.equals("--hidden")) {
+				actOnHidden = true;
 			}
 			if (i == 0) {
 				inputPath = new File(arg);
