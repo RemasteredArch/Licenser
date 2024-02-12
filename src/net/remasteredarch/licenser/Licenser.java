@@ -30,6 +30,7 @@ import java.lang.Process;
 import java.lang.Runtime;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.Stack;
 
 public class Licenser {
 	private final static String version = "v0.1";
@@ -42,11 +43,13 @@ public class Licenser {
 	private static boolean isDryRun;
 	private static File copyrightNoticeTemplate = new File("/home/arch/dev/Licenser/license_notice_template.txt");
 	private static boolean skipGitCheck;
+	private static Stack<File> files;
 
 	public static void main(String[] args) {
 		parseOptions(args);
 		if (!skipGitCheck)
 			checkForGit(inputPath);
+		System.out.println("Continuing...");
 		// print(inputPath, copyrightNoticeTemplate);
 		// print(inputPath);
 	}
@@ -70,7 +73,7 @@ public class Licenser {
 			System.out.print(bold + "(y/n): " + reset);
 			Scanner input = new Scanner(System.in);
 			response = input.next();
-		} while (response != "y" && response != "n");
+		} while (!response.equals("y") && !response.equals("n"));
 		if (response == "n")
 			System.exit(0); // this is probably *not* the right way
 	}
