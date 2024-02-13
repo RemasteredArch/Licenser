@@ -52,15 +52,90 @@ public class Licenser {
 
 	public static void main(String[] args) {
 		parseOptions(args);
+
 		if (!skipGitCheck)
 			checkForGit(inputPath);
+
 		getFileList(inputPath);
-		System.out.println("List:");
-		for (File file : files) {
-			System.out.println(file);
-		}
+
+		getItems();
+
 		// print(inputPath, copyrightNoticeTemplate);
 		// print(inputPath);
+	}
+
+	private static void getItems() {
+		for (File file : files) {
+			ArrayList<Commit> commits = getGitLog(file);
+			HashMap<String, String> authors = getAuthors(commits);
+			items.add(new Item(file, authors));
+		}
+	}
+
+	private static HashMap<String, String> getAuthors(ArrayList<Commit> commits) {
+		HashMap<String, ArrayList<String>> authors = new HashMap<>();
+
+		for (Commit commit : commits) {
+			String author = commit.authorName;
+			String year = commit.commitYear;
+
+			if (authors.get(author) == null) {
+				ArrayList<String> years = new ArrayList<>();
+				years.add(year);
+				authors.put(author, years);
+			} else {
+				authors.get(author).add(year);
+			}
+		}
+
+		HashMap<String, String> authorsWithYearRange = new HashMap<>();
+
+		for (String author : authors.keySet()) {
+			System.out.println("Author: " + author + " Years: ");
+		}
+
+		return authorsWithYearRange;
+
+	}
+
+	private static ArrayList<Commit> getGitLog(File file) {
+		ArrayList<Commit> commits = new ArrayList<>();
+
+		String path = file.toString();
+		String[] command = { "git", "log", "--author-date-order", "--reverse", "--date=short", "--pretty=format:%an\n%as",
+				path };
+
+		try {
+			Process git = new ProcessBuilder(command).start();
+			try {
+				git.waitFor();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+
+			BufferedReader stdout = git.inputReader(); // this is limited 8192 chars, or about 300 commits!!
+			while (stdout.ready()) { // until empty, parse ouput
+				String authorName = stdout.readLine(); // e.g. RemasteredArch
+				String commitYear = stdout.readLine().substring(0, 4); // e.g. 2024-02-12 -> 2024
+				Commit commit = new Commit(authorName, commitYear);
+				commits.add(commit);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return commits;
+	}
+
+	private static boolean checkExtension(File file) {
+		for (String extension : codeFileExtensions) {
+			int fileLength = file.toString().length();
+			int extensionLength = extension.length();
+			String inputExtension = file.toString().substring(fileLength - extensionLength, fileLength);
+			if (inputExtension.equals(extension))
+				return true;
+		}
+		return false;
 	}
 
 	private static void getFileList(File file) {
@@ -79,21 +154,6 @@ public class Licenser {
 				}
 			}
 		}
-	}
-
-	private static ArrayList<Commit> getGitLog(File file) {
-
-	}
-
-	private static boolean checkExtension(File file) {
-		for (String extension : codeFileExtensions) {
-			int fileLength = file.toString().length();
-			int extensionLength = extension.length();
-			String inputExtension = file.toString().substring(fileLength - extensionLength, fileLength);
-			if (inputExtension.equals(extension))
-				return true;
-		}
-		return false;
 	}
 
 	private static void checkForGit(File file) {
@@ -231,12 +291,28 @@ public class Licenser {
 }
 
 class Item {
-	public File tempFile;
 	public File originalFile;
-	public ArrayList<HashMap<String, String>> authors;
+	// public File tempFile;
+	public HashMap<String, String> authors;
+
+	public Item(File originalFile, HashMap<String, String> authors) {
+		this.originalFile = originalFile;
+		// this.tempFile = tempFile;
+		this.authors = authors;
+	}
 }
 
 class Commit {
-	public String author;
-	public String year;
+	public String authorName;
+	public String commitYear;
+
+	public Commit(String authorName, String commitYear) {
+		this.authorName = authorName;
+		this.commitYear = commitYear;
+	}
+
+	@Override
+	public String toString() {
+		return authorName + ", " + commitYear;
+	}
 }
