@@ -37,9 +37,12 @@ public class Licenser {
 	private static Stack<File> files = new Stack<>();
 	private static ArrayList<Item> items = new ArrayList<>();
 	private static String[] codeFileExtensions = { ".java" };
+	private static ArrayList<Author> authorList; // list of authors and their aliases for author deduplication
 
 	public static void main(String[] args) {
 		parseOptions(args);
+
+		loadAuthorList();
 
 		checkForGit(inputPath);
 
@@ -83,7 +86,7 @@ public class Licenser {
 		HashMap<String, ArrayList<String>> authors = new HashMap<>();
 
 		for (Commit commit : commits) {
-			String author = commit.authorName;
+			String author = getCanonicalAuthorName(commit.authorName);
 			String year = commit.commitYear;
 
 			if (authors.get(author) == null) {
@@ -106,6 +109,33 @@ public class Licenser {
 		}
 
 		return authorsWithYearRange;
+	}
+
+	private static String getCanonicalAuthorName(String authorName) {
+		for (Author canonicalAuthor : authorList) {
+			for (String alternateName : canonicalAuthor.names) {
+				if (authorName.equals(alternateName))
+					authorName = canonicalAuthor.canonicalName;
+			}
+		}
+
+		return authorName;
+	}
+
+	private static void loadAuthorList() {
+		authorList = new ArrayList<>();
+
+		ArrayList<String> jaxyAliases = new ArrayList<>();
+		jaxyAliases.add("jaxydog");
+		Author jaxy = new Author("Jaxydog", jaxyAliases);
+
+		ArrayList<String> iceAliases = new ArrayList<>();
+		iceAliases.add("Ice");
+		iceAliases.add("IcePenguin1");
+		Author ice = new Author("Icepenguin", iceAliases);
+
+		authorList.add(jaxy);
+		authorList.add(ice);
 	}
 
 	private static ArrayList<Commit> getGitLog(File file) {
@@ -273,5 +303,20 @@ class Commit {
 	@Override
 	public String toString() {
 		return authorName + ", " + commitYear;
+	}
+}
+
+class Author {
+	String canonicalName;
+	ArrayList<String> names;
+
+	public Author(String canonicalName, ArrayList<String> names) {
+		this.canonicalName = canonicalName;
+		this.names = names;
+	}
+
+	@Override
+	public String toString() {
+		return canonicalName + ": " + names;
 	}
 }
