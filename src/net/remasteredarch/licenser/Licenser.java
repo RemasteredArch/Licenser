@@ -48,7 +48,6 @@ public class Licenser {
 	private static boolean actOnHidden;
 	private static File copyrightNoticeTemplate = new File("/home/arch/dev/Licenser/templates/java.txt");
 	private static char rangeChar = '-';
-	private static boolean skipGitCheck;
 	private static Stack<File> files = new Stack<>();
 	private static ArrayList<Item> items = new ArrayList<>();
 	private static String[] codeFileExtensions = { ".java" };
@@ -56,15 +55,13 @@ public class Licenser {
 	public static void main(String[] args) {
 		parseOptions(args);
 
-		if (!skipGitCheck)
-			checkForGit(inputPath);
+		checkForGit(inputPath);
 
 		getFileList(inputPath);
 
 		getItems();
 
 		printItems();
-
 	}
 
 	private static void printItems() {
@@ -73,7 +70,7 @@ public class Licenser {
 			for (String author : item.authors.keySet()) {
 				authors += author + " " + item.authors.get(author) + faint + ", " + reset;
 			}
-			authors = authors.replaceAll(", $", ""); // trim off last comma
+			authors = authors.substring(0, authors.length() - reset.length() - ", ".length());
 
 			String output = String.format("%-" + outputPadding + "s", item.originalFile)
 					.replace(' ', '.')
@@ -199,19 +196,11 @@ public class Licenser {
 			if (exitValue == 0) // if project is tracked by git
 				return;
 		} catch (IOException e) {
+			e.printStackTrace();
 		}
-		String object = file.isDirectory() ? "directory" : "file"; // if project is not tracked by git or git is not
-																																// installed
-		System.out.println("This " + object
-				+ " is not tracked by git. Licenser is not guaranteed to work perfectly, and may make irreversible changes. Are you sure you want to continue? (--ignore-git to ignore this check)");
-		String response;
-		do {
-			System.out.print(bold + "(y/n): " + reset);
-			Scanner input = new Scanner(System.in);
-			response = input.next();
-		} while (!response.equals("y") && !response.equals("n"));
-		if (response.equals("n"))
-			System.exit(0); // this is probably *not* the right way
+		String object = file.isFile() ? "file" : "directory"; // if project is not tracked by git or git is not installed
+		System.out.println(
+				"This " + object + " is not tracked by git. Licenser is exclusively designed for use on git repositories.");
 	}
 
 	private static void print(File path) {
@@ -279,9 +268,6 @@ public class Licenser {
 				System.out.println(version);
 				System.exit(0); // this might be the *wrong* way to do it
 			}
-			if (arg.equals("--ignore-git")) {
-				skipGitCheck = true;
-			}
 			if (arg.equals("--hidden")) {
 				actOnHidden = true;
 			}
@@ -305,7 +291,6 @@ public class Licenser {
 		System.out.println("  -v | --version  " + italic + "Displays the version of the program" + reset);
 		System.out.println(
 				"  -d | --dry-run  " + italic + "Displays the effects of a given input without actually running." + reset);
-		System.out.println("  --ignore-git    " + italic + "Ignores safety check that git is in use.");
 		System.out.println("\n\nLicenser is work in progress software. " + bold + "Use at your own risk!" + reset);
 		System.out.println(italic
 				+ "\n\nLicenser is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.");
