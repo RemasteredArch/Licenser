@@ -21,23 +21,28 @@ import java.util.HashMap;
 import java.util.Stack;
 
 public class Licenser {
-	private final static String version = "v0.1";
-
-	private final static String reset = "\033[0m";
-	private final static String bold = "\033[1m";
-	private final static String faint = "\033[90m"; // gray text
-	private final static String italic = "\033[3m";
-	private final static int outputPadding = 100; // width of file path column in file authors list output
-
+	// input
 	private static File inputPath;
 	private static boolean isDryRun;
 	private static boolean actOnHidden;
-	private static File copyrightNoticeTemplate = new File("/home/arch/dev/Licenser/templates/java.txt");
-	private static char rangeChar = '-';
+
+	// generated
 	private static Stack<File> files = new Stack<>();
 	private static ArrayList<Item> items = new ArrayList<>();
-	private static String[] codeFileExtensions = { ".java" };
 	private static ArrayList<Author> authorList; // list of authors and their aliases for author deduplication
+
+	// static configuration
+	private final static String reset = "\033[0m";
+	private final static String bold = "\033[1m";
+	private final static String italic = "\033[3m";
+
+	// configuration
+	private final static String version = "v0.1";
+	private final static String faint = "\033[90m"; // gray text
+	private final static int outputPadding = 100; // width of file path column in file authors list output
+	private static String[] codeFileExtensions = { ".java" };
+	private static char rangeChar = '-';
+	private static File copyrightNoticeTemplate = new File("/home/arch/dev/Licenser/templates/java.txt");
 
 	public static void main(String[] args) {
 		parseOptions(args);
