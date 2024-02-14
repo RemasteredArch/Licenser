@@ -39,7 +39,9 @@ public class Licenser {
 
 	private final static String reset = "\033[0m";
 	private final static String bold = "\033[1m";
+	private final static String faint = "\033[90m"; // gray text
 	private final static String italic = "\033[3m";
+	private final static int outputPadding = 90; // width of file path column in file authors list output
 
 	private static File inputPath;
 	private static boolean isDryRun;
@@ -61,8 +63,27 @@ public class Licenser {
 
 		getItems();
 
-		// print(inputPath, copyrightNoticeTemplate);
-		// print(inputPath);
+		printItems();
+
+	}
+
+	private static void printItems() {
+		for (Item item : items) {
+			String authors = "";
+			for (String author : item.authors.keySet()) {
+				authors += author + " " + item.authors.get(author) + faint + ", " + reset;
+			}
+			authors = authors.substring(0, authors.length() - reset.length() - ", ".length()); // trim off the last comma
+
+			String output = String.format("%-" + outputPadding + "s", item.originalFile)
+					.replace(' ', '.')
+					.replace(".", faint + '.' + reset)
+					.replace("/", faint + '/' + reset)
+					+ authors
+					+ reset;
+
+			System.out.println(output);
+		}
 	}
 
 	private static void getItems() {
@@ -99,7 +120,6 @@ public class Licenser {
 			ArrayList<String> years = authors.get(author);
 			String yearRange = years.get(0) + rangeChar + years.get(years.size() - 1);
 			authorsWithYearRange.put(author, yearRange);
-			System.out.println(author + " " + authorsWithYearRange.get(author));
 		}
 
 		return authorsWithYearRange;
@@ -171,7 +191,7 @@ public class Licenser {
 		try {
 			Process git = new ProcessBuilder(command).start();
 			try {
-				Thread.sleep(500); // there has got to be a better way than this
+				git.waitFor(); // there has got to be a better way than this
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
