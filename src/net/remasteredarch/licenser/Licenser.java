@@ -23,6 +23,7 @@ import java.util.Stack;
 public class Licenser {
 	// input
 	private static File inputPath;
+	private static boolean onlyList;
 	private static boolean isDryRun;
 	private static boolean actOnHidden;
 
@@ -31,14 +32,13 @@ public class Licenser {
 	private static ArrayList<Item> items = new ArrayList<>();
 	private static ArrayList<Author> authorList; // list of authors and their aliases for author deduplication
 
-	// static configuration
+	// configuration
 	private final static String reset = "\033[0m";
 	private final static String bold = "\033[1m";
 	private final static String italic = "\033[3m";
-
-	// configuration
-	private final static String version = "v0.1";
 	private final static String faint = "\033[90m"; // gray text
+
+	private final static String version = "v0.1";
 	private final static int outputPadding = 100; // width of file path column in file authors list output
 	private static String[] codeFileExtensions = { ".java" };
 	private static char rangeChar = '-';
@@ -232,7 +232,7 @@ public class Licenser {
 		if (args.length == 0)
 			helpMessage();
 
-		for (int i = 0; i < args.length; i++) {
+		for (int i = 0; i < args.length; i++) { // could probably be done better with continue;
 			String arg = args[i];
 			if (arg.equals("--help") || arg.equals("-h")) {
 				helpMessage();
@@ -263,8 +263,9 @@ public class Licenser {
 		System.out.println(bold + "\nOptions:" + reset);
 		System.out.println("  -h | --help     " + italic + "Displays this help message" + reset);
 		System.out.println("  -v | --version  " + italic + "Displays the version of the program" + reset);
-		System.out.println(
-				"  -d | --dry-run  " + italic + "Displays the effects of a given input without actually running" + reset);
+		System.out.println("  -l | --list     " + italic + "Only lists contributors" + reset);
+		System.out.println("  -d | --dry-run  " + italic
+				+ "Only applies edits to temporary directory, does not overwrite project" + reset);
 		System.out.println("\n\nLicenser is work in progress software. " + bold + "Use at your own risk!" + reset);
 		System.out.println(italic
 				+ "\n\nLicenser is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.");
