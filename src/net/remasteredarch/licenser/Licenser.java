@@ -203,58 +203,6 @@ public class Licenser {
 		System.exit(1); // is this the best way to do this?
 	}
 
-	private static void print(File path) {
-		if (path.isDirectory()) {
-			printDirectoryRecursive(path, false, 0);
-		} else {
-			printFileContents(path);
-		}
-	}
-
-	private static void print(File path, File copyrightNoticeTemplate) {
-		if (path.isDirectory()) {
-			printDirectoryRecursive(path, false, 0);
-		} else {
-			printFileContents(path, copyrightNoticeTemplate);
-		}
-	}
-
-	private static void printFileContents(File file) {
-		try {
-			System.out.println(Files.readString(file.toPath()));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	private static void printFileContents(File file, File copyrightNoticeTemplate) {
-		try {
-			System.out.println(Files.readString(copyrightNoticeTemplate.toPath()) + Files.readString(file.toPath()));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	private static void printDirectoryRecursive(File directory, boolean showHidden, int depth) {
-		String indent = "";
-		for (int i = 0; i < depth - 1; i++) {
-			indent += "  ";
-		}
-
-		System.out.println(indent + directory + ":");
-		indent += "  ";
-
-		for (File file : directory.listFiles()) {
-			if (!file.isHidden()) {
-				if (file.isDirectory()) {
-					printDirectoryRecursive(file, showHidden, depth + 1);
-				} else {
-					System.out.println(indent + file);
-				}
-			}
-		}
-	}
-
 	private static void parseOptions(String[] args) {
 		if (args.length == 0)
 			helpMessage();
