@@ -125,16 +125,10 @@ public class Licenser {
 	private static void loadAuthorList() {
 		authorList = new ArrayList<>();
 
-		ArrayList<String> jaxyAliases = new ArrayList<>();
-		jaxyAliases.add("jaxydog");
-		Author jaxy = new Author("Jaxydog", jaxyAliases);
-
-		ArrayList<String> iceAliases = new ArrayList<>();
-		iceAliases.add("Ice");
-		iceAliases.add("IcePenguin1");
-		Author ice = new Author("Icepenguin", iceAliases);
-
+		Author jaxy = new Author("Jaxydog", "jaxydog");
 		authorList.add(jaxy);
+
+		Author ice = new Author("Icepenguin", "Ice", "IcePenguin1");
 		authorList.add(ice);
 	}
 
@@ -313,6 +307,15 @@ class Author {
 	public Author(String canonicalName, ArrayList<String> names) {
 		this.canonicalName = canonicalName;
 		this.names = names;
+	}
+
+	public Author(String canonicalName, String... names) {
+		this.canonicalName = canonicalName;
+
+		this.names = new ArrayList<>();
+		for (String name : names) {
+			this.names.add(name);
+		}
 	}
 
 	@Override
