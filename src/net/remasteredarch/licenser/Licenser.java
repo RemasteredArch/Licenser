@@ -45,6 +45,7 @@ public class Licenser {
 	private static boolean isDryRun;
 	private static boolean actOnHidden;
 	private static File copyrightNoticeTemplate = new File("/home/arch/dev/Licenser/templates/java.txt");
+	private static char rangeChar = '-';
 	private static boolean skipGitCheck;
 	private static Stack<File> files = new Stack<>();
 	private static ArrayList<Item> items = new ArrayList<>();
@@ -79,19 +80,26 @@ public class Licenser {
 			String author = commit.authorName;
 			String year = commit.commitYear;
 
-			if (authors.get(author) == null) {
+			if (authors.get(author) == null) { // maybe switch to a pure string implementation, where it's 2023-2024, so you
+																					// could check charAt(3), charAt(8) to see if the year is valid (or a greater
+																					// range with substring but the point stands)
 				ArrayList<String> years = new ArrayList<>();
 				years.add(year);
 				authors.put(author, years);
 			} else {
-				authors.get(author).add(year);
+				ArrayList<String> years = authors.get(author);
+				years.add(year);
+				authors.put(author, years);
 			}
 		}
 
 		HashMap<String, String> authorsWithYearRange = new HashMap<>();
 
 		for (String author : authors.keySet()) {
-			System.out.println("Author: " + author + " Years: ");
+			ArrayList<String> years = authors.get(author);
+			String yearRange = years.get(0) + rangeChar + years.get(years.size() - 1);
+			authorsWithYearRange.put(author, yearRange);
+			System.out.println(author + " " + authorsWithYearRange.get(author));
 		}
 
 		return authorsWithYearRange;
@@ -102,8 +110,9 @@ public class Licenser {
 		ArrayList<Commit> commits = new ArrayList<>();
 
 		String path = file.toString();
-		String[] command = { "git", "log", "--author-date-order", "--reverse", "--date=short", "--pretty=format:%an\n%as",
-				path };
+		String[] command = {
+				"git", "log", "--author-date-order", "--reverse", "--date=short", "--pretty=format:%an\n%as", path
+		};
 
 		try {
 			Process git = new ProcessBuilder(command).start();
