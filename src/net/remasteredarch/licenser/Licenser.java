@@ -73,7 +73,7 @@ public class Licenser {
 			for (String author : item.authors.keySet()) {
 				authors += author + " " + item.authors.get(author) + faint + ", " + reset;
 			}
-			authors = authors.substring(0, authors.length() - reset.length() - ", ".length()); // trim off the last comma
+			authors = authors.replaceAll(", $", ""); // trim off last comma
 
 			String output = String.format("%-" + outputPadding + "s", item.originalFile)
 					.replace(' ', '.')
