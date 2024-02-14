@@ -230,11 +230,12 @@ public class Licenser {
 		System.out.println(bold + "\nPath:" + reset);
 		System.out.println("  Provide a directory to recursively apply to all files within the given directory");
 		System.out.println("  Provide a file to only apply to the given file");
+		System.out.println("  Licenser only works on single files or directories, it is not designed for glob expansion");
 		System.out.println(bold + "\nOptions:" + reset);
 		System.out.println("  -h | --help     " + italic + "Displays this help message" + reset);
 		System.out.println("  -v | --version  " + italic + "Displays the version of the program" + reset);
 		System.out.println(
-				"  -d | --dry-run  " + italic + "Displays the effects of a given input without actually running." + reset);
+				"  -d | --dry-run  " + italic + "Displays the effects of a given input without actually running" + reset);
 		System.out.println("\n\nLicenser is work in progress software. " + bold + "Use at your own risk!" + reset);
 		System.out.println(italic
 				+ "\n\nLicenser is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.");
