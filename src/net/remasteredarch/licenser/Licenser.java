@@ -72,7 +72,9 @@ public class Licenser {
 			}
 			authors = authors.substring(0, authors.length() - reset.length() - ", ".length());
 
-			String output = String.format("%-" + outputPadding + "s", item.originalFile)
+			String output = String.format("%-" + outputPadding + "s", item.originalFile) // does have the side effect of
+																																										// affecting characters in
+																																										// filenames, but it's worth it
 					.replace(' ', '.')
 					.replace(".", faint + '.' + reset)
 					.replace("/", faint + '/' + reset)
@@ -98,9 +100,7 @@ public class Licenser {
 			String author = commit.authorName;
 			String year = commit.commitYear;
 
-			if (authors.get(author) == null) { // maybe switch to a pure string implementation, where it's 2023-2024, so you
-																					// could check charAt(3), charAt(8) to see if the year is valid (or a greater
-																					// range with substring but the point stands)
+			if (authors.get(author) == null) {
 				ArrayList<String> years = new ArrayList<>();
 				years.add(year);
 				authors.put(author, years);
@@ -120,7 +120,6 @@ public class Licenser {
 		}
 
 		return authorsWithYearRange;
-
 	}
 
 	private static ArrayList<Commit> getGitLog(File file) {
@@ -201,6 +200,7 @@ public class Licenser {
 		String object = file.isFile() ? "file" : "directory"; // if project is not tracked by git or git is not installed
 		System.out.println(
 				"This " + object + " is not tracked by git. Licenser is exclusively designed for use on git repositories.");
+		System.exit(1); // is this the best way to do this?
 	}
 
 	private static void print(File path) {
