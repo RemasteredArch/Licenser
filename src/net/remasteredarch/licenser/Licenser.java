@@ -13,26 +13,12 @@
 
 package net.remasteredarch.licenser;
 
-import java.util.Scanner;
-import java.io.PrintStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.List;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOError;
-import java.io.IOException;
-import java.lang.Process;
-import java.lang.Runtime;
 import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.util.Stack;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Stack;
 
 public class Licenser {
 	private final static String version = "v0.1";
@@ -41,7 +27,7 @@ public class Licenser {
 	private final static String bold = "\033[1m";
 	private final static String faint = "\033[90m"; // gray text
 	private final static String italic = "\033[3m";
-	private final static int outputPadding = 90; // width of file path column in file authors list output
+	private final static int outputPadding = 100; // width of file path column in file authors list output
 
 	private static File inputPath;
 	private static boolean isDryRun;
@@ -125,10 +111,9 @@ public class Licenser {
 	private static ArrayList<Commit> getGitLog(File file) {
 		ArrayList<Commit> commits = new ArrayList<>();
 
-		String path = file.toString();
-		String[] command = {
-				"git", "log", "--author-date-order", "--reverse", "--date=short", "--pretty=format:%an\n%as", path
-		};
+		String directory = file.isFile() ? getDirectory(file) : file.toString();
+		String[] command = { "git", "-C", directory, "log", "--author-date-order", "--reverse", "--date=short",
+				"--pretty=format:%an\n%as", file.getAbsolutePath() }; // .getCanonicalPath() may be better
 
 		try {
 			Process git = new ProcessBuilder(command).start();
@@ -182,8 +167,11 @@ public class Licenser {
 	}
 
 	private static void checkForGit(File file) {
-		String path = file.toString();
-		String[] command = { "git", "ls-files", "--error-unmatch", path };
+		String directory = file.isFile() ? getDirectory(file) : file.toString();
+		String[] command = {
+				"git", "-C", directory, "ls-files", "--error-unmatch", file.getAbsolutePath() // .getCanonicalPath() may be
+																																											// better
+		};
 		try {
 			Process git = new ProcessBuilder(command).start();
 			try {
@@ -198,9 +186,17 @@ public class Licenser {
 			e.printStackTrace();
 		}
 		String object = file.isFile() ? "file" : "directory"; // if project is not tracked by git or git is not installed
-		System.out.println(
-				"This " + object + " is not tracked by git. Licenser is exclusively designed for use on git repositories.");
+		System.out.println("This " + object
+				+ " is inaccessible, does not exist, or is not tracked by git; or git is not installed. Licenser is exclusively designed for use on git repositories.");
 		System.exit(1); // is this the best way to do this?
+	}
+
+	private static String getDirectory(File file) {
+		if (file.isDirectory())
+			throw new IllegalArgumentException();
+
+		String path = file.toString();
+		return path.substring(0, path.length() - file.getName().length());
 	}
 
 	private static void parseOptions(String[] args) {
@@ -221,7 +217,7 @@ public class Licenser {
 			}
 			if (i == 0) {
 				inputPath = new File(arg);
-			} else if (arg.equals("--dry-run") || arg.equals("-d")) {
+			} else if (arg.equals("--dry-run") || arg.equals("-d")) { // why is this checked seperately?
 				isDryRun = true;
 			}
 		}
