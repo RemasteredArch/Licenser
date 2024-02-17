@@ -1,0 +1,11 @@
+{
+	"dryRun": false,
+	"list": false,
+	"languages": [
+		"java"
+	],
+	"authors": [
+		"Icepenguin": ["Ice", "Icepenguin1"],
+		"Jaxydog": ["jaxydog"]
+	]
+}
