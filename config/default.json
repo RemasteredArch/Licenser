@@ -4,8 +4,13 @@
 	"languages": [
 		"java"
 	],
-	"authors": [
-		"Icepenguin": ["Ice", "Icepenguin1"],
-		"Jaxydog": ["jaxydog"]
-	]
+	"authors": {
+		"Icepenguin": [
+			"Ice",
+			"Icepenguin1"
+		],
+		"Jaxydog": [
+			"jaxydog"
+		]
+	}
 }
