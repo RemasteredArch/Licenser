@@ -1,0 +1,37 @@
+<config>
+	<parameters>
+		<dryrun value="true" />
+		<list value="false" />
+	</parameters>
+
+	<languages>
+		<language name="javascript">
+			<comment type="singleLine" value="//" />
+			<comment type="multiLine" start="/*" middle=" *" end=" */" />
+			<extension value=".js" />
+			<extension value=".ts" />
+		</language>
+
+		<language name="java">
+			<comment type="singleLine" value="//" />
+			<comment type="multiLine" start="/*" middle=" *" end=" */" />
+			<extension value=".java" />
+		</language>
+
+		<language name="shell">
+			<comment type="singleLine" value="#" />
+			<extension value=".sh" />
+		</language>
+	</languages>
+
+	<authors>
+		<author name="Icepenguin">
+			<name value="Ice" />
+			<name value="Icepenguin1" />
+		</author>
+
+		<author name="Jaxydog">
+			<name value="jaxydog" />
+		</author>
+	</authors>
+</config>
