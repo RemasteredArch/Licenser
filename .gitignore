@@ -9,3 +9,4 @@
 # gradle files
 /build/
 /.gradle/
+/.settings/

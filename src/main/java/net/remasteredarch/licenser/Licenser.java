@@ -305,27 +305,3 @@ class Commit {
 		return authorName + ", " + commitYear;
 	}
 }
-
-class Author {
-	String canonicalName;
-	ArrayList<String> names;
-
-	public Author(String canonicalName, ArrayList<String> names) {
-		this.canonicalName = canonicalName;
-		this.names = names;
-	}
-
-	public Author(String canonicalName, String... names) {
-		this.canonicalName = canonicalName;
-
-		this.names = new ArrayList<>();
-		for (String name : names) {
-			this.names.add(name);
-		}
-	}
-
-	@Override
-	public String toString() {
-		return canonicalName + ": " + names;
-	}
-}
