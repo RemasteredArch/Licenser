@@ -6,4 +6,4 @@ Licenser is licensed under the GNU General Public License version 3, or (at your
 
 ## Jackson
 
-Jackson is licensed under the Apache License, Version 2.0, found at [<https://www.apache.org/licenses/LICENSE-2.0>](https://www.apache.org/licenses/LICENSE-2.0)
+[Jackson](https://github.com/FasterXML/jackson/) is licensed under the Apache License, Version 2.0, found at [<https://www.apache.org/licenses/LICENSE-2.0>](https://www.apache.org/licenses/LICENSE-2.0)
